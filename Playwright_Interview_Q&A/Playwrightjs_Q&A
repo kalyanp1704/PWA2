@@ -1,0 +1,688 @@
+# Playwright (JavaScript) Interview Questions and Answers: Basic to Advanced
+## Contents
+
+- [Level 1: Basics](#level-1-basics)
+- [Level 2: Intermediate](#level-2-intermediate)
+- [Level 3: Advanced](#level-3-advanced)
+- [Scenario-Based Playwright Questions](#scenario-based-playwright-questions)
+- [JavaScript Fundamentals](#javascript-fundamentals-for-playwright-interviews)
+- [Quick Coding Practice](#quick-coding-practice-playwright-and-javascript)
+- [Quick Command Cheat Sheet](#quick-command-cheat-sheet)
+- [Last-Minute Tips](#last-minute-tips)
+
+#################################################################################################################################################################
+## Level 1: Basics
+
+### 🔵 Q1. What is Playwright?
+
+Playwright is an open-source browser automation framework from Microsoft. It lets me automate Chromium, Firefox and WebKit with one API and has language bindings for JavaScript/TypeScript, Python, Java and .NET. The built-in Playwright Test runner, fixtures and assertions are for JavaScript/TypeScript; the other language bindings are commonly used with their language's test frameworks. I use Playwright for UI automation and API testing.
+
+### 🔵 Q2. Why did you choose Playwright over Selenium?
+
+Mainly for stability and speed. Playwright has built-in auto-waiting, so I write far fewer manual waits. It runs tests in parallel out of the box, gives me traces, screenshots and videos for debugging, and handles modern apps with multiple tabs and iframes more easily. On the Fanatics Casino project, where the UI is very dynamic, this reduced flaky tests. I still know Selenium well from Coyni and Wish.
+
+### 🔵 Q3. Which browsers and languages does Playwright support?
+
+Browser engines: Chromium, Firefox and WebKit. Playwright can also launch branded Chrome or Edge through browser channels; WebKit is the Safari engine, not the Safari browser itself. Language bindings are available for JavaScript/TypeScript, Python, Java and .NET. Playwright runs on Windows, macOS and Linux, in headed or headless mode.
+
+### 🔵 Q4. How do you install and set up Playwright?
+
+Run `npm init playwright@latest`. It asks whether to use JavaScript or TypeScript, where to keep tests, and whether to add a GitHub Actions workflow. It then installs the dependencies and browsers and creates `playwright.config.js`, a `tests` folder and an example test. I can start with `npx playwright test`.
+
+### 🔵 Q5. What does a basic Playwright test look like?
+
+```javascript
+const { test, expect } = require('@playwright/test');
+
+test('home page has the correct title', async ({ page }) => {
+  await page.goto('https://example.com');
+  await expect(page).toHaveTitle(/Example/);
+});
+```
+
+The `page` object comes from a built-in fixture, so I do not need to launch or close the browser myself. Browser operations such as navigation, clicks and assertions return promises, so I use `async` and `await`; creating a locator itself is synchronous.
+
+### 🔵 Q6. What are the main objects in Playwright: Browser, BrowserContext and Page?
+
+Browser is the browser instance. A BrowserContext is like a fresh, isolated browser profile with its own cookies, storage and sessions. A Page is a single tab inside a context. Playwright creates a new context for each test, so tests are isolated from each other without the cost of launching a new browser every time.
+
+### 🔵 Q7. What is the Playwright Test runner?
+
+It is the test runner provided by `@playwright/test`. It gives me `test` and `expect`, fixtures, hooks, parallel execution, retries, projects for multiple browsers, reporters, and tracing. The package uses the Playwright browser automation library, so I keep the Playwright package versions aligned and install the browser binaries for that version.
+
+### 🔵 Q8. How do you run tests from the command line?
+
+- Run everything: `npx playwright test`
+- One file: `npx playwright test tests/login.spec.js`
+- One browser project (when configured): `npx playwright test --project=chromium`
+- Headed mode: `npx playwright test --headed`
+- By title or tag: `npx playwright test --grep @smoke`
+- UI mode: `npx playwright test --ui`
+- Debug: `npx playwright test --debug`
+- Open the last report: `npx playwright show-report`
+
+### 🔵 Q9. What is the difference between headed and headless mode?
+
+Headless runs the browser without a visible window, which is faster and is what CI uses. Headed shows the real browser window, which helps when I write or debug tests. By default Playwright runs headless, and I switch to headed with `--headed` or in the config.
+
+### 🔵 Q10. What is Codegen?
+
+Codegen records my actions in the browser and generates test code. I run `npx playwright codegen <url>`. I use it to quickly find locators and learn how a page behaves, but I never copy its output blindly. I clean it up, move the locators into page objects, and add proper assertions.
+
+### 🔵 Q11. What are the common actions in Playwright?
+
+`goto`, `click`, `dblclick`, `fill`, `pressSequentially`, `press`, `check`, `uncheck`, `selectOption`, `hover`, `dragTo`, `setInputFiles`, `focus` and `screenshot`. Most actions are used on a locator, for example `await page.getByRole('button', { name: 'Login' }).click();`. Prefer `fill()` or `pressSequentially()` over the older, discouraged `type()` method.
+
+### 🔵 Q12. What is the difference between `fill()` and `type()`?
+
+`fill()` clears the field and sets the whole value at once, so it is fast and the usual choice. `pressSequentially()` sends characters one by one, so I use it only when the app reacts to each key, such as search suggestions or masked fields. The older `type()` method is discouraged.
+
+### 🔵 Q13. What are assertions in Playwright?
+
+Assertions come from `expect`. For the page and locators I use web-first assertions like `toBeVisible()`, `toHaveText()`, `toHaveValue()`, `toBeEnabled()`, `toHaveURL()` and `toHaveTitle()`. For plain values I use generic ones like `toBe()`, `toEqual()` and `toContain()`. The web-first ones are better because they automatically retry until the condition is true or the timeout ends.
+
+### 🔵 Q14. What are hooks in Playwright?
+
+`test.beforeAll`, `test.beforeEach`, `test.afterEach` and `test.afterAll`. I use `beforeEach` for common setup like opening the app, and `afterEach` for cleanup. For shared setup that many tests need, I prefer fixtures because they are more flexible and only run when a test asks for them.
+
+### 🔵 Q15. How do you group tests?
+
+With `test.describe('Casino Lobby', () => { ... })`. It groups related tests, lets me share hooks, and makes the report easier to read.
+
+```javascript
+test.describe('Casino Favorites', () => {
+  test('add a game to favorites', async ({ page }) => { /* ... */ });
+  test('remove a game from favorites', async ({ page }) => { /* ... */ });
+});
+```
+
+## Level 2: Intermediate
+
+### 🔵 Q16. What types of locators does Playwright provide and which do you prefer?
+
+`getByRole`, `getByText`, `getByLabel`, `getByPlaceholder`, `getByAltText`, `getByTitle` and `getByTestId`, plus CSS and XPath through `page.locator()`. I prefer the user-facing ones first, mainly `getByRole`, then `getByTestId` where the app has stable test IDs. I use CSS or XPath only when nothing better is available. This makes tests readable and less likely to break when the layout changes.
+
+### 🔵 Q17. What is auto-waiting and what checks does Playwright do?
+
+Before an action, Playwright waits for the checks required by that action. For example, `click()` requires a unique, visible, stable, enabled element that can receive pointer events; `fill()` requires a visible, enabled, editable field. These checks reduce the need for manual waits, but they do not replace assertions that the application reached the expected state.
+
+### 🔵 Q18. What is a strict mode violation?
+
+If a locator matches more than one element and I try to act on it, for example `click()`, Playwright throws an error instead of guessing. I fix it by making the locator more specific, or by using `.first()`, `.nth(index)`, `.filter()` or by chaining locators. I treat it as a useful warning that my locator is not precise enough.
+
+### 🔵 Q19. How do you filter and chain locators?
+
+```javascript
+// chain: find the Play button inside a specific game card
+const card = page.locator('.game-tile').filter({ hasText: 'Blackjack' });
+await card.getByRole('button', { name: 'Play' }).click();
+```
+
+I can also use `filter({ has: locator })`, `filter({ hasNot: ... })`, `.first()`, `.last()` and `.nth()`. In a casino lobby with many similar tiles, this is how I pick one precise game.
+
+### 🔵 Q20. What is the difference between `locator()` and `$()` or `elementHandle`?
+
+A locator is lazy and re-finds the element every time I use it, with auto-waiting and retries, so it does not go stale. An element handle points to one specific element at a moment in time, and it can become stale if the page changes. Playwright recommends locators, and I use them almost always.
+
+### 🔵 Q21. How do you handle dropdowns, checkboxes, radio buttons and file uploads?
+
+```javascript
+await page.locator('#country').selectOption('India');     // native select
+await page.getByLabel('Accept terms').check();           // checkbox or radio
+await page.getByLabel('Upload').setInputFiles('data/file.pdf'); // upload
+```
+
+For custom dropdowns that are not a native `<select>`, I click to open them and then click the option by role or text.
+
+### 🔵 Q22. How do you handle file downloads?
+
+```javascript
+const downloadPromise = page.waitForEvent('download');
+await page.getByText('Export').click();
+const download = await downloadPromise;
+await download.saveAs(download.suggestedFilename());
+```
+
+I start waiting for the download event before the click, so I never miss it.
+
+### 🔵 Q23. How do you handle alerts, confirms and prompts?
+
+By listening to the dialog event before the action that triggers it.
+
+```javascript
+page.on('dialog', async dialog => {
+  console.log(dialog.message());
+  await dialog.accept();   // or dialog.dismiss()
+});
+await page.getByText('Delete').click();
+```
+
+### 🔵 Q24. How do you handle new tabs and popups?
+
+```javascript
+const [popup] = await Promise.all([
+  page.waitForEvent('popup'),
+  page.getByText('Play Now').click(),
+]);
+await expect(popup).toHaveURL(/game/);
+```
+
+For a popup opened by a particular page, I wait for that page's `popup` event before clicking. If the new page is not tied to that opener, I can instead wait for the browser context's `page` event.
+
+### 🔵 Q25. How do you handle iframes?
+
+With `frameLocator`:
+
+```javascript
+const gameFrame = page.frameLocator('#game-iframe');
+await gameFrame.getByRole('button', { name: 'Spin' }).click();
+```
+
+After that, I use normal locators inside the frame. Game providers often load games inside an iframe, so this is something I use regularly.
+
+### 🔵 Q26. What is the difference between `waitForSelector`, `waitForLoadState`, `waitForURL` and `waitForResponse`?
+
+`waitForSelector` waits for an element, but locator assertions are now preferred. `waitForLoadState` waits for page load stages like `load` or `domcontentloaded`. `waitForURL` waits for navigation to a URL. `waitForResponse` waits for a specific network response, which is helpful when the UI updates only after an API call. I avoid `waitForTimeout` (fixed sleep) except when debugging.
+
+### 🔵 Q27. What are soft assertions?
+
+A normal assertion stops the test at the first failure. A soft assertion, `expect.soft(...)`, records the failure but lets the test continue, so I can see several problems in one run. I use them when checking many independent fields on one page, such as all labels on an account screen.
+
+### 🔵 Q28. What is `test.step()` and why use it?
+
+It groups actions into named steps that show up in the report and trace. It makes long tests, like placing a bet from login to result, much easier to read and debug.
+
+```javascript
+await test.step('Place a bet', async () => {
+  await page.getByLabel('Stake').fill('10');
+  await page.getByRole('button', { name: 'Bet' }).click();
+});
+```
+
+### 🔵 Q29. What are the timeouts in Playwright?
+
+The test timeout is 30 seconds by default and covers test-scoped fixture setup and teardown, `beforeEach` /`afterEach`, and the test body. The expect timeout is 5 seconds by default for retrying assertions. Action and navigation timeouts default to `0` (no separate timeout), so an operation is still bounded by the test timeout when it runs inside a test. I set these values in `playwright.config.js` and override the test timeout with `test.setTimeout()` or `test.slow()` when appropriate.
+
+### 🔵 Q30. How do you run tests in parallel?
+
+By default, Playwright runs test files in parallel using workers, while tests in the same file run in order in one worker. With `fullyParallel: true` (or a parallel `describe` group), tests can also run concurrently within a file. The number of workers is set with `workers` in the config or `--workers` on the command line. Each test gets an isolated browser context, but tests can still interfere if they share mutable accounts or test data.
+
+### 🔵 Q31. What if some tests must run in order?
+
+I use `test.describe.configure({ mode: 'serial' })`. In serial mode the tests in that group run one after another, and if one fails, the remaining tests are skipped. When retries are configured, Playwright retries the serial group as a unit. I use serial mode only when really needed, because independent tests are more reliable.
+
+### 🔵 Q32. What are projects in the config file?
+
+Projects let me run the same tests with different settings, mostly for browsers and devices.
+
+```javascript
+projects: [
+  { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+  { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
+  { name: 'webkit',   use: { ...devices['Desktop Safari'] } },
+  { name: 'mobile',   use: { ...devices['iPhone 13'] } },
+],
+```
+
+This gives cross-browser and mobile-emulation coverage without writing extra tests. The `devices` descriptors must be imported from `@playwright/test`.
+
+### 🔵 Q33. What are the important settings in `playwright.config.js`?
+
+`testDir`, `timeout`, `retries`, `workers`, `fullyParallel`, `reporter`, and under `use`: `baseURL`, `headless`, `viewport`, `screenshot`, `video` and `trace`. `projects`, `webServer` and `globalSetup` are top-level settings that I add when needed. Keeping configuration in one place keeps tests cleaner.
+
+### 🔵 Q34. How do you retry failed tests?
+
+Using `retries` in the config or `--retries=2` on the command line. In CI I usually keep one or two retries and set `trace: 'on-first-retry'` so I get a trace for failures. I treat retries as a safety net, and I still investigate any test that needed a retry, because it might be flaky.
+
+### 🔵 Q35. How do you capture screenshots, videos and traces?
+
+Set them in `use`:
+
+```javascript
+use: {
+  screenshot: 'only-on-failure',
+  video: 'retain-on-failure',
+  trace: 'on-first-retry',
+},
+```
+
+For a specific moment, I can call `page.screenshot({ path: 'name.png' })`. The trace includes a timeline, DOM snapshots, network calls and console logs, and I open it with `npx playwright show-trace trace.zip`.
+
+### 🔵 Q36. How do you tag tests and run only some of them?
+
+Put a tag in the title or in the details and filter with `--grep`.
+
+```javascript
+test('launch a game @smoke', async ({ page }) => { /* ... */ });
+// run: npx playwright test --grep @smoke
+```
+
+Newer versions also support `{ tag: '@smoke' }` in the test details. Tags help me run smoke, regression or feature-specific suites in CI.
+
+### 🔵 Q37. How do you skip or mark tests?
+
+`test.skip()` to skip, `test.fixme()` for a known bug or unfinished test, `test.fail()` when the test is expected to fail, and `test.slow()` to triple the test timeout. I can make them conditional, for example skipping a test on WebKit.
+
+### 🔵 Q38. How do you do data-driven testing in Playwright?
+
+By looping over data and creating a test for each item.
+
+```javascript
+const users = [
+  { name: 'valid user', pass: 'Pass@123', ok: true },
+  { name: 'wrong password', pass: 'bad', ok: false },
+];
+
+for (const u of users) {
+  test(`login: ${u.name}`, async ({ page }) => {
+    // use u.pass and assert based on u.ok
+  });
+}
+```
+
+The data can come from arrays, JSON, CSV or an API. Each item gets its own test in the report.
+
+### 🔵 Q39. How do you manage environment variables and configuration?
+
+I keep URLs, credentials and environment names outside the code, in `.env` files loaded explicitly with a package such as `dotenv`, or in CI secrets. In the config I read them from `process.env`, for example `baseURL: process.env.BASE_URL`. I add real `.env` files to `.gitignore` and never commit secrets.
+
+### 🔵 Q40. How do you reuse login across tests?
+
+I log in once, save the session with `storageState`, and let the other tests start already logged in. This saves a lot of time. I cover the details in the advanced section (Q47).
+
+## Level 3: Advanced
+
+### 🔵 Q41. How do you implement the Page Object Model in Playwright with JavaScript?
+
+I create one class per page or component. The constructor takes `page` and defines the locators, and the methods hold the actions. Tests call the methods and keep the assertions.
+
+```javascript
+// pages/LobbyPage.js
+class LobbyPage {
+  constructor(page) {
+    this.page = page;
+    this.searchBox = page.getByPlaceholder('Search games');
+    this.gameTiles = page.locator('.game-tile');
+  }
+  async open() { await this.page.goto('/casino'); }
+  async searchGame(name) { await this.searchBox.fill(name); }
+  async launchGame(name) {
+    await this.gameTiles.filter({ hasText: name }).getByRole('button', { name: 'Play' }).click();
+  }
+}
+module.exports = { LobbyPage };
+```
+
+The relative URL in `open()` assumes `baseURL` is configured; otherwise, use a full URL. On Fanatics I used the same idea, with reusable components for lobby navigation, filters, categories, favorites and game launch. If the UI changes, I fix one file instead of many tests.
+
+### 🔵 Q42. What are fixtures in Playwright and which built-in ones do you know?
+
+A fixture is a piece of setup that Playwright prepares for a test and cleans up afterwards. A test only asks for what it needs by listing it in the arguments. Common built-in fixtures include `page`, `context`, `browser`, `request`, `browserName` and `playwright`; `testInfo` is supplied separately as the second test-callback argument, not as a fixture. Fixtures are better than big `beforeEach` blocks because they are reusable, load on demand, and handle teardown automatically.
+
+### 🔵 Q43. How do you create a custom fixture?
+
+By extending `test`:
+
+```javascript
+// fixtures.js
+const base = require('@playwright/test');
+const { LobbyPage } = require('./pages/LobbyPage');
+
+exports.test = base.test.extend({
+  lobbyPage: async ({ page }, use) => {
+    const lobby = new LobbyPage(page);
+    await lobby.open();
+    await use(lobby);          // test runs here
+    // cleanup code can go after use()
+  },
+});
+exports.expect = base.expect;
+```
+
+```javascript
+// tests/lobby.spec.js
+const { test, expect } = require('../fixtures');
+
+test('search a game', async ({ lobbyPage }) => {
+  await lobbyPage.searchGame('Roulette');
+  await expect(lobbyPage.gameTiles.first()).toContainText('Roulette');
+});
+```
+
+I use custom fixtures for page objects, logged-in users, and test-data preconditions such as a user with enough balance or with no balance for the insufficient funds scenario.
+
+### 🔵 Q44. What does `test.use()` do?
+
+It overrides the options for a file or a `describe` block, for example the viewport, locale, `storageState` or the base URL.
+
+```javascript
+test.use({ viewport: { width: 390, height: 844 }, locale: 'en-GB' });
+```
+
+### 🔵 Q45. What is global setup and teardown?
+
+Global setup is a script that runs once before all tests, such as creating test data or logging in and saving the session. Global teardown runs once at the end for cleanup. They are configured with `globalSetup` and `globalTeardown` in the config.
+
+### 🔵 Q46. What is a setup project and why is it recommended over global setup?
+
+A setup project is a normal project that runs first, and dependent projects list it in `dependencies`. It is often preferred for test-based setup because it appears in the report and uses the test runner's fixtures, retries and reporting. A setup project is not a replacement for every use of `globalSetup`.
+
+```javascript
+projects: [
+  { name: 'setup', testMatch: /auth\.setup\.js/ },
+  { name: 'chromium', use: { ...devices['Desktop Chrome'], storageState: '.auth/user.json' }, dependencies: ['setup'] },
+],
+```
+
+### 🔵 Q47. How do you reuse a login session with `storageState`?
+
+I log in once in a setup test and save the cookies and local storage to a file. Other tests start with that state, so they skip the login screen.
+
+```javascript
+// auth.setup.js
+const { test, expect } = require('@playwright/test');
+
+test('login once', async ({ page }) => {
+  await page.goto('/login'); // Assumes baseURL is configured.
+  await page.getByLabel('Email').fill(process.env.USER_EMAIL);
+  await page.getByLabel('Password').fill(process.env.USER_PASSWORD);
+  await page.getByRole('button', { name: 'Login' }).click();
+  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+  await page.context().storageState({ path: '.auth/user.json' });
+});
+```
+
+The login assertion ensures authentication completed before saving the state. I keep `.auth/` out of Git because storage-state files can contain cookies and tokens. For tests that change a user's balance, I use separate users or a fresh state so the tests stay independent.
+
+### 🔵 Q48. How do you do API testing in Playwright?
+
+With the built-in `request` fixture, which sends HTTP calls without opening a browser page.
+
+```javascript
+test('create and verify an order', async ({ request }) => {
+  const res = await request.post('/api/orders', { data: { item: 'abc', qty: 2 } });
+  expect(res.status()).toBe(201);
+  const body = await res.json();
+  expect(body.qty).toBe(2);
+});
+```
+
+The relative API URL assumes `baseURL` is configured for the request fixture; otherwise, use a full URL.
+
+It is also useful for fast setup and cleanup, for example creating test data through the API and then validating the result in the UI. My day-to-day API automation has been with REST Assured, but the same checks on status, body and headers apply in Playwright.
+
+### 🔵 Q49. How do you mock or intercept network calls?
+
+With `page.route()`. I can fulfil a request with fake data, modify it, or block it.
+
+```javascript
+await page.route('**/api/games', route =>
+  route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([{ name: 'Mock Game' }]) })
+);
+await page.route('**/*.{png,jpg}', route => route.abort()); // block images
+```
+
+It is helpful to test error states such as a 500 response, slow networks or empty data, without depending on the backend.
+
+### 🔵 Q50. How do you wait for a specific API response after a UI action?
+
+Start waiting before the action so I do not miss it:
+
+```javascript
+const [response] = await Promise.all([
+  page.waitForResponse(r => r.url().includes('/api/bet') && r.status() === 200),
+  page.getByRole('button', { name: 'Place Bet' }).click(),
+]);
+const data = await response.json();
+```
+
+This way I can check the response associated with the action as well as what is displayed. To assert what the UI sent, I inspect `response.request()` or wait directly for it with `page.waitForRequest()`.
+
+### 🔵 Q51. What are `expect.poll()` and `toPass()`?
+
+`expect.poll()` repeatedly runs a function until the value matches, useful for values that are not on the page, such as an API result or a database status. `expect(async () => { ... }).toPass()` retries a whole block of code until it passes; I set an explicit timeout when I need a bounded retry period. I use them for eventually consistent behaviour instead of fixed sleeps.
+
+### 🔵 Q52. How do you debug a failing test?
+
+First I read the error and the HTML report. Then I open the trace with `npx playwright show-trace`, which shows each step, DOM snapshots, network calls and console logs. Locally I can use `--debug` or `--ui` mode, and `page.pause()` to stop and inspect. In CI I keep traces and screenshots for failures. Most issues, like wrong locators or timing, are visible in the trace.
+
+### 🔵 Q53. How do you handle flaky tests?
+
+I find the root cause before adding retries. Typical causes are unstable locators, missing assertions on the real ready state, shared test data between tests, order dependencies, and slow environments. The fixes are better locators, web-first assertions instead of fixed waits, isolated data and clean preconditions. I run the test many times with `--repeat-each=20` to confirm it is stable, and keep retries only as a safety net.
+
+### 🔵 Q54. How do you run Playwright in CI with GitHub Actions?
+
+```yaml
+name: Playwright Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npx playwright test
+        env:
+          TEST_USER: ${{ secrets.TEST_USER }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+```
+
+On Fanatics, I integrated the regression suites into GitHub Actions with parallel execution, automated reporting and continuous validation. I map credentials for dedicated test accounts from GitHub Actions secrets into environment variables; I never put credentials directly in the workflow. I upload both the HTML report and `test-results/` so screenshots and traces are available for debugging.
+
+### 🔵 Q55. What is sharding and when do you use it?
+
+Sharding splits the test suite across multiple machines, for example `npx playwright test --shard=1/3 --reporter=blob`. Each shard must produce a blob report; after collecting them into one directory, I create the combined HTML report with `npx playwright merge-reports --reporter=html <blob-report-directory>`. It cuts the total time of a large regression suite. Workers give parallelism on one machine, and shards give parallelism across machines.
+
+### 🔵 Q56. Which reporters does Playwright have?
+
+`list`, `line`, `dot`, `html`, `json`, `junit`, `blob` and `github`. I normally use `html` for people and `junit` or `json` for CI tools. Third-party reporters, such as Allure, can also be added if the team needs them. I can combine several reporters in the config.
+
+### 🔵 Q57. What is visual testing in Playwright?
+
+`await expect(page).toHaveScreenshot()` compares the current screenshot with a saved baseline image and fails if the difference is above the threshold. I use it carefully on stable pages, mask dynamic areas like dates or animations, and run it on the same OS and browser as the baseline, otherwise small rendering differences cause false failures.
+
+### 🔵 Q58. How do you test mobile views, geolocation and permissions?
+
+Playwright can emulate devices with `devices['iPhone 13']`, and set viewport, locale, timezone, geolocation and permissions in the context options.
+
+```javascript
+test.use({ ...devices['Pixel 7'], geolocation: { latitude: 17.38, longitude: 78.48 }, permissions: ['geolocation'] });
+```
+
+This is useful for location-based features, which are common in regulated areas like iGaming, and for checking responsive layouts. It is emulation, not a real device, so for final checks on real devices I would use a device cloud.
+
+### 🔵 Q59. Does Playwright work with Shadow DOM?
+
+Yes. Playwright's CSS and role locators pierce open shadow DOM by default, so I can write normal locators. XPath does not pierce the shadow DOM, which is one more reason to prefer role and CSS locators.
+
+### 🔵 Q60. How do you attach extra information to a test report?
+
+With `testInfo.attach()` I can add screenshots, logs or JSON to the report. With `test.info().annotations.push({ type: 'issue', description: 'JIRA-123' })` I can link a test to a ticket. It helps to connect results with the requirement or defect.
+
+### 🔵 Q61. How would you design a scalable Playwright framework?
+
+A layered structure:
+
+- **tests/**: only scenarios and assertions
+- **pages/ and components/**: page objects and reusable components such as lobby, filters, game launch and betting
+- **fixtures/**: custom fixtures for page objects, logged-in users and preconditions
+- **utils/**: helpers for data, API calls, dates and common validations
+- **test-data/**: JSON or generated data
+- **config**: `playwright.config.js`, environment files and CI workflows
+
+Rules for locators, naming and preconditions are written down so the whole team, and the AI tools, follow the same pattern. That is how I built the Casino framework on Fanatics.
+
+### 🔵 Q62. What is Playwright MCP and how have you used it?
+
+MCP (Model Context Protocol) lets an AI assistant use tools. With Playwright MCP, the assistant can control a real browser, read the page structure and generate more accurate locators and steps. I used it with Claude Code, Kiro and GitHub Copilot in VS Code to speed up scripting, and I always review and run the generated code before accepting it.
+
+### 🔵 Q63. How do you use AI safely when writing Playwright tests?
+
+I provide guidance in `AGENTS.md` and steering files about folder structure, naming, locator priorities, fixtures, preconditions and what not to do. These instructions help keep generated code consistent with the framework, but I still review it, run it, and verify that the assertions are real. AI helps with speed, but I keep ownership of quality.
+
+### 🔵 Q64. How do you migrate a Selenium suite to Playwright?
+
+I start with the most valuable and stable tests, rebuild the page objects with Playwright locators, and migrate in batches. I run old and new suites side by side to compare results, and I remove explicit waits and duplicated tests instead of copying them. I also move CI to the new runner. On Wish I contributed to moving legacy test assets to modern JavaScript-based frameworks, which improved quality and release speed.
+
+### 🔵 Q65. Playwright vs Cypress: what are the differences?
+
+Playwright supports Chromium, Firefox and WebKit, multiple languages, and isolated browser contexts; it has built-in support for automating multiple pages and tabs. Cypress focuses on JavaScript and TypeScript and provides `cy.origin()` for supported cross-origin flows, but does not provide the same general multi-tab model. I choose based on project requirements, including multi-page flows and browser coverage.
+
+### 🔵 Q66. What are the limitations of Playwright?
+
+It emulates mobile browsers instead of using real devices, so native mobile apps need other tools. WebKit on Windows and Linux is not the exact Safari on macOS or iOS. Visual comparison depends on the OS and browser, and a very large legacy suite needs an effort to migrate. Knowing these limits helps me choose the right tool for each need.
+
+### 🔵 Q67. What are your Playwright best practices?
+
+- Prefer user-facing locators such as `getByRole`; use stable test IDs such as `getByTestId` when appropriate, and avoid brittle XPath.
+- Rely on auto-waiting and web-first assertions, and avoid `waitForTimeout`.
+- Keep tests independent, each with its own data and context.
+- Use page objects, components and fixtures to avoid duplication.
+- Reuse login with `storageState`.
+- Keep config, secrets and environment values outside the code.
+- Capture traces on failure and review them.
+- Keep tests small, focused and clearly named.
+
+## Scenario-Based Playwright Questions
+
+### 🔵 SC1. A test passes locally but fails in GitHub Actions. What do you do?
+
+I download the report, trace and screenshots from the CI artifacts and compare them with the local run. Common causes are slower CI machines, different viewport or locale, missing test data, or a dependency between tests. I reproduce with the same settings, fix the cause, for example a missing wait on a ready state, and run it multiple times to confirm.
+
+### 🔵 SC2. An element is visible on the page but Playwright says it is not clickable. Why?
+
+Playwright's actionability checks may be failing: the element could be covered by an overlay or cookie banner, still animating, or disabled. Playwright normally scrolls an off-screen element into view automatically. I check the trace to see which check failed and resolve the real cause, such as closing an overlay or waiting for an animation to finish. I avoid `force: true` or JavaScript clicks because they can hide real user problems.
+
+### 🔵 SC3. The same locator matches ten game tiles. How do you click the right one?
+
+I narrow it down by filtering on the text or by chaining inside the card, for example `page.locator('.game-tile').filter({ hasText: 'Blackjack' }).getByRole('button', { name: 'Play' })`. If the tiles have unique test IDs, I use them directly.
+
+### 🔵 SC4. The game opens in a new tab. How do you automate it?
+
+I wait for the `page` event on the context at the same time as the click, using `Promise.all`, and continue with the new page object. I wrap this in a reusable game-launch component so every test uses the same logic.
+
+### 🔵 SC5. How do you test the insufficient funds scenario?
+
+I use a precondition fixture that provides a user with a zero or low balance, so the test does not depend on earlier runs. The test tries to place a bet and I assert the error message and that the balance and bet state are unchanged. If needed, the data is prepared through an API call before the UI steps.
+
+### 🔵 SC6. A page loads slowly because of third-party scripts. What can you do?
+
+I wait for the exact thing my test needs (an element or an API response) instead of the whole page load. For tests that do not need the third-party content, I can block those requests with `page.route()`. This makes tests faster and more stable.
+
+### 🔵 SC7. The release is tomorrow and the full regression takes too long. What do you do?
+
+I run the tagged smoke and critical suites first, increase workers, and use sharding in CI to split the suite over several machines. I skip low-risk tests for this run, and inform the team about what was and was not covered.
+
+### 🔵 SC8. One test fails once in ten runs. How do you fix it?
+
+I run it with `--repeat-each=10` and trace on, then compare a failed trace with a passing one. I look for a missing wait on a real ready state, shared data, or a changing locator. After the fix, I repeat the run to prove it is stable.
+
+### 🔵 SC9. How do you test the same flow on Chrome, Firefox and Safari engines?
+
+By defining projects for `chromium`, `firefox` and `webkit` in the config and running without changing the tests. If a feature behaves differently on a browser, I skip or handle it with `test.skip(browserName === 'webkit', 'reason')` and log a defect if it is a real issue.
+
+### 🔵 SC10. How do you verify that a UI action changed the data in the backend?
+
+I check the UI result and, when useful, the network response captured with `waitForResponse`; I may also verify the result through a supported API or database check. I choose independent checks that fit the system rather than requiring all three for every test.
+
+## JavaScript Fundamentals for Playwright Interviews
+
+### 🔵 JS1. What are `async` and `await`, and why are they needed in Playwright?
+
+Browser actions take time, so Playwright methods return promises. `await` pauses the test until the promise resolves, and `async` marks a function that uses `await`. If I forget `await`, the next step may run too early and cause flaky or confusing failures.
+
+### 🔵 JS2. What is a Promise and what is `Promise.all()`?
+
+A Promise represents a value that will be available later. `Promise.all()` starts several promises together, fulfills when all fulfill, and rejects if one rejects. In Playwright I use it to start waiting for an event (new tab, download, response) and perform the click at the same time.
+
+### 🔵 JS3. Difference between `var`, `let` and `const`?
+
+`var` is function-scoped and can be redeclared, which causes bugs. `let` is block-scoped and can be reassigned. `const` is block-scoped and cannot be reassigned. I use `const` by default and `let` when the value changes.
+
+### 🔵 JS4. Difference between `==` and `===`?
+
+`==` compares after converting types, so `'5' == 5` is true. `===` compares value and type, so `'5' === 5` is false. I always use `===`.
+
+### 🔵 JS5. What are arrow functions?
+
+A shorter way to write functions, such as `const add = (a, b) => a + b;`. They also keep the `this` value from the surrounding code, which is why they are used so often in callbacks, for example in `route` handlers and array methods.
+
+### 🔵 JS6. What are `map`, `filter` and `reduce`?
+
+`map` transforms every item and returns a new array, `filter` keeps items that match a condition, and `reduce` combines all items into one value. For example, `const names = await page.locator('.game-title').allTextContents();` and then `names.filter(n => n.includes('Roulette'))`.
+
+### 🔵 JS7. What is destructuring and the spread operator?
+
+Destructuring pulls values out of objects or arrays: `const { page, context } = fixtures;`. Spread copies or merges them: `{ ...devices['iPhone 13'], locale: 'en-GB' }`. Both are used all the time in Playwright configs and fixtures.
+
+### 🔵 JS8. What is a closure?
+
+A function that remembers the variables from the place where it was created, even after that outer function has finished. Fixtures and helper functions that return other functions use this idea.
+
+### 🔵 JS9. What are `require` and `import`? Difference between CommonJS and ES modules?
+
+CommonJS uses `require()` and `module.exports`, and ES modules use `import` and `export`. Playwright works with both. I just keep the project consistent with the `type` field in `package.json`.
+
+### 🔵 JS10. How do you handle errors in JavaScript?
+
+With `try/catch/finally`. In tests I let failures fail the test with a clear message, and use `try/catch` only for cases I truly expect, like optional popups that may or may not appear.
+
+## Quick Coding Practice (Playwright and JavaScript)
+
+Practise writing these without looking:
+
+1. Log in with a page object and assert the dashboard heading is visible.
+2. Read all game names from a list with `allTextContents()` and check they are sorted.
+3. Click a button that opens a new tab and assert its URL.
+4. Mock an API with `page.route()` to return an empty list and assert the empty-state message.
+5. Write a custom fixture that returns a logged-in page.
+6. Reverse a string, check a palindrome, and count character frequency in JavaScript.
+7. Remove duplicates from an array: `const unique = [...new Set(arr)];`
+8. Find the largest number in an array without using `Math.max`.
+
+```javascript
+// Example for item 2
+const titles = await page.locator('.game-title').allTextContents();
+const sorted = [...titles].sort((a, b) => a.localeCompare(b));
+expect(titles).toEqual(sorted);
+```
+
+## Quick Command Cheat Sheet
+
+| Task | Command |
+| --- | --- |
+| Install Playwright | `npm init playwright@latest` |
+| Install browsers | `npx playwright install` |
+| Run all tests | `npx playwright test` |
+| Run one file | `npx playwright test tests/login.spec.js` |
+| Run by browser | `npx playwright test --project=chromium` |
+| Run by tag or title | `npx playwright test --grep @smoke` |
+| Headed mode | `npx playwright test --headed` |
+| UI mode | `npx playwright test --ui` |
+| Debug mode | `npx playwright test --debug` |
+| Parallel workers | `npx playwright test --workers=4` |
+| Retries | `npx playwright test --retries=2` |
+| Repeat to check flakiness | `npx playwright test --repeat-each=10` |
+| Sharding | `npx playwright test --shard=1/3` |
+| Record a test | `npx playwright codegen <url>` |
+| Open the HTML report | `npx playwright show-report` |
+| Open a trace | `npx playwright show-trace trace.zip` |
+
+## Last-Minute Tips
+
+- Always say **why** you chose something, for example why `getByRole` is better than XPath. Interviewers like reasoning more than memorised definitions.
+- Connect answers to **your own project**: Fanatics Casino (lobby, game launch, betting, favorites, insufficient funds), GitHub Actions with parallel execution, fixtures and preconditions, and AI-assisted scripting with Playwright MCP.
+- If you have not used a feature in a real project, say so honestly and explain how you would use it. This builds trust.
+- Practise the code snippets for Q5, Q24, Q41, Q43, Q47 and Q50. These come up in almost every Playwright interview.
+
+Good luck, Siva!
