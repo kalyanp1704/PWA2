@@ -1,12 +1,8 @@
-
-# Playwright
-node_modules/
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-.env
-.env.*
-!.env.example
-PartialScreenshot.png
-screenshot.png
+**/node_modules/
+**/.git/
+**/playwright-report/
+**/blob-report/
+PWA2/test-results/
+**/.env
+**/.env.*
+!**/.env.example
