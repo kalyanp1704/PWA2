@@ -2,16 +2,6 @@
 
 > Senior QA / QA Automation Engineer — Interview Preparation Notes
 
-## How to Use These Notes in VS Code
-
-1. Create a folder such as `QA-Interview-Preparation`.
-2. Save this file as `QA_Automation_Interview_QA.md`.
-3. Open the folder in VS Code.
-4. Open the Markdown preview with **Ctrl + Shift + V**.
-5. Personalize project answers so they accurately reflect your real experience.
-
-> **Interview tip:** For each answer, explain the concept, how you use it, and a practical example. Do not claim project experience or metrics that you cannot support.
-
 ## 1. Core Java
 
 ### **Q1. What are the four pillars of OOP?**
