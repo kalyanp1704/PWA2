@@ -125,8 +125,7 @@ validate it, then return to the original handle if needed.
 String parent = driver.getWindowHandle();
 driver.findElement(By.id("openWindow")).click();
 
-WebDriverWait wait =
-    new WebDriverWait(driver, Duration.ofSeconds(10));
+WebDriverWait wait =  new WebDriverWait(driver, Duration.ofSeconds(10));
 wait.until(d -> d.getWindowHandles().size() > 1);
 
 for (String handle : driver.getWindowHandles()) {
