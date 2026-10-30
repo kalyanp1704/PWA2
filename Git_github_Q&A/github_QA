@@ -1,0 +1,326 @@
+# GIT & GITHUB – EASY LEARNING NOTES
+
+## 1. What is Git?
+
+Git is a **Version Control System (VCS)** used to track changes in our source code.
+
+**Why do we use Git?**
+
+- To track code changes.
+- To maintain different versions of code.
+- To restore previous versions.
+- To collaborate with team members.
+- To manage project history.
+
+## 2. What is GitHub?
+
+GitHub is a cloud-based platform where developers store and manage their Git repositories.
+
+**Simple difference:**
+
+| Git                  | GitHub                         |
+| -------------------- | ------------------------------ |
+| Version control tool | Cloud-based hosting platform   |
+| Tracks code changes  | Stores Git repositories online |
+| Works locally        | Works online                   |
+| Manages commits      | Enables collaboration          |
+
+**Easy way to remember:**
+
+- Git = Tracks changes.
+- GitHub = Stores and shares code.
+
+## 3. Important Git Concepts
+
+### Repository (Repo)
+
+A repository is a folder where your project files and Git history are maintained.
+
+### Clone
+
+Downloading an existing GitHub repository to your local computer for the first time.
+
+```bash
+git clone <repository-url>
+```
+
+### Pull
+
+Downloading the latest changes from GitHub into your local repository.
+
+```bash
+git pull origin main
+```
+
+### Add
+
+Selecting the files you want to include in your next commit.
+
+```bash
+git add .
+```
+
+### Commit
+
+Saving your selected changes in the local Git history with a message.
+
+```bash
+git commit -m "Added login test cases"
+```
+
+### Push
+
+Uploading your local commits to GitHub.
+
+```bash
+git push origin main
+```
+
+## 4. Most Important Git Commands
+
+| Command                   | Purpose                              |
+| ------------------------- | ------------------------------------ |
+| `git init`                | Initialize a Git repository          |
+| `git clone`               | Download a repository                |
+| `git status`              | Check modified files                 |
+| `git add .`               | Stage all changes                    |
+| `git commit -m "message"` | Save changes locally                 |
+| `git push`                | Upload changes to GitHub             |
+| `git pull`                | Download latest changes              |
+| `git fetch`               | Check remote changes without merging |
+| `git log`                 | View commit history                  |
+| `git branch`              | View branches                        |
+| `git switch main`         | Switch to main branch                |
+
+## 5. How to Upload Your Code from VS Code to GitHub
+
+Follow these steps whenever you make changes to your automation project.
+
+### Step 1: Open your project in VS Code
+
+Open your project folder in VS Code.
+
+### Step 2: Initialize Git
+
+```bash
+git init
+```
+
+This creates a local Git repository.
+
+### Step 3: Check file status
+
+```bash
+git status
+```
+
+This displays modified and untracked files.
+
+### Step 4: Add files
+
+```bash
+git add .
+```
+
+This stages all changes.
+
+### Step 5: Commit changes
+
+```bash
+git commit -m "Added Playwright automation scripts"
+```
+
+This saves your changes locally.
+
+### Step 6: Connect to GitHub
+
+If you already created a GitHub repository:
+
+```bash
+git remote add origin <repository-url>
+```
+
+### Step 7: Push code to GitHub
+
+```bash
+git push -u origin main
+```
+
+Your local code is now uploaded to GitHub.
+
+**Note:** If the GitHub repository already has commits, you may need to pull and resolve any conflicts before pushing.
+
+## 6. How to Pull Code from GitHub into VS Code
+
+Suppose your teammate updated the automation scripts on GitHub.
+
+You want to get those latest changes into your local VS Code project.
+
+### Step 1: Open VS Code terminal.
+
+### Step 2: Navigate to your project folder.
+
+### Step 3: Execute:
+
+```bash
+git pull origin main
+```
+
+Now your local project receives the latest changes from GitHub.
+
+## 7. Difference Between Add, Commit, Push and Pull
+
+| Concept | Easy meaning                 |
+| ------- | ---------------------------- |
+| Add     | Select changes               |
+| Commit  | Save changes locally         |
+| Push    | Upload changes to GitHub     |
+| Pull    | Download changes from GitHub |
+
+**Remember this sequence:**
+
+```text
+Modify Code
+    ↓
+Git Add
+    ↓
+Git Commit
+    ↓
+Git Push
+    ↓
+GitHub
+```
+
+To get updates:
+
+```text
+GitHub
+    ↓
+Git Pull
+    ↓
+VS Code
+```
+
+## 8. Real-Time Example for QA Automation
+
+Imagine you are working on a Playwright automation project.
+
+You created:
+
+- login.spec.js
+- event.spec.js
+- checkout.spec.js
+
+After completing your test scripts, you want to upload them to GitHub.
+
+Execute:
+
+```bash
+git status
+
+git add .
+
+git commit -m "Added login and event test scripts"
+
+git push origin main
+```
+
+If your teammate updates the project:
+
+```bash
+git pull origin main
+```
+
+Your local project will get the latest changes.
+
+## 9. How to Download Code from GitHub for the First Time
+
+If you don't have the project locally:
+
+### Step 1
+
+Open the GitHub repository.
+
+### Step 2
+
+Click the Code button.
+
+### Step 3
+
+Copy the HTTPS repository URL.
+
+### Step 4
+
+Open VS Code terminal and execute:
+
+```bash
+git clone <repository-url>
+```
+
+### Step 5
+
+Open the downloaded project folder in VS Code.
+
+**Remember:**
+
+- First time downloading = Clone.
+- Getting latest changes = Pull.
+
+## 10. Common Interview Questions
+
+**Q1. What is Git?**
+
+Git is a distributed version control system used to track source code changes and maintain different versions of a project.
+
+**Q2. What is GitHub?**
+
+GitHub is a cloud-based platform used to host Git repositories and collaborate with developers.
+
+**Q3. What is the difference between Git Pull and Git Push?**
+
+Git Pull downloads the latest changes from a remote repository into the local repository, whereas Git Push uploads local commits to the remote repository.
+
+**Q4. What is Git Commit?**
+
+Git Commit saves staged changes in the local repository with a descriptive message.
+
+**Q5. What is Git Clone?**
+
+Git Clone creates a local copy of an existing remote repository.
+
+**Q6. What is Git Add?**
+
+Git Add moves modified or new files into the staging area before committing.
+
+**Q7. What is Git Status?**
+
+Git Status displays the current state of the working directory and staging area.
+
+**Q8. What is a Git Branch?**
+
+A branch is an independent line of development that allows developers to work on features without directly changing the main branch.
+
+**Q9. What is a Merge Conflict?**
+
+A merge conflict occurs when Git cannot automatically combine changes, usually because different changes affect the same part of a file. Developers must resolve the conflict manually.
+
+## 11. Easy Memory Trick
+
+Remember these four words:
+
+- ADD = Select files.
+- COMMIT = Save locally.
+- PUSH = Send to GitHub.
+- PULL = Get from GitHub.
+
+### Daily Practice Commands
+
+```bash
+git status
+git add .
+git commit -m "Updated automation scripts"
+git push origin main
+git pull origin main
+```
+
+**Final Tip:** Practise these commands in your Playwright automation project. Once you understand Add → Commit → Push → Pull, Git and GitHub become much easier to work with.

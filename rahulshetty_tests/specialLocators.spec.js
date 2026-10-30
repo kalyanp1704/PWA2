@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
-/*
+
+test.use({ launchOptions: { slowMo: 500 } });
+
 test('Playwright Special locators', async ({ browser }) => {
 
     const context = await browser.newContext
@@ -28,9 +30,9 @@ test('Playwright Special locators', async ({ browser }) => {
     await page.getByText('× Success! Thank you! Your').click();
   
 });
-*/
 
-/*
+
+
 test("Sauce Labs - Website", async({ browser }) => {
 
     const context = await browser.newContext({ viewport: { width: 1920, height: 1080 }});
@@ -42,7 +44,7 @@ test("Sauce Labs - Website", async({ browser }) => {
     await expect(page.getByRole("link", { name: "My Cart (0)" })).toBeVisible();
 
 });
-*/
+
 
 test.describe("Sauce Demo", () => {
     test("registers a customer and reads home page product details", async ({ page }) => {
@@ -85,3 +87,5 @@ test.describe("Sauce Demo", () => {
         console.log("Home page products:", products);
      });
 });
+
+
