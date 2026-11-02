@@ -1,5 +1,5 @@
 const {test, expect, request} = require('@playwright/test');
-//const { ApiUtils } = require('./Utils/APIUtils');
+const { ApiUtils } = require('../Utils/APIUtils');
 const loginPayLoad = {
     userEmail: process.env.ECOMMERCE_TEST_EMAIL,
     userPassword: process.env.ECOMMERCE_TEST_PASSWORD
@@ -7,17 +7,24 @@ const loginPayLoad = {
 const orderPayLoad = {orders:[{country:"Cuba",productOrderedId:"67a8dde5c0d3e6622a297cc8"}]};
 
 let response;
+let apiContext;
 test.beforeAll( async()=>
 {
     if (!loginPayLoad.userEmail || !loginPayLoad.userPassword) {
         throw new Error('Set ECOMMERCE_TEST_EMAIL and ECOMMERCE_TEST_PASSWORD to run this test.');
     }
 
-    const apiContext = await request.newContext();
+    apiContext = await request.newContext();
     const apiUtils = new ApiUtils(apiContext,loginPayLoad);
     response =  await apiUtils.createOrder(orderPayLoad);
  
 })
+
+test.afterAll(async () => {
+    if (apiContext) {
+        await apiContext.dispose();
+    }
+});
  
 //create order is success
 test('@API Place the order', async ({page})=>
