@@ -139,7 +139,7 @@ test('Signup/in - Check out the Product', async ({ browser }) => {
   expect(orderId.includes(orderIdDetails)).toBeTruthy();
 });
 
-test('@login and checkout the order - Special Locators', async ({ page }) => {
+test('login and checkout the order - Special Locators @login', async ({ page }) => {
    const productName = 'ZARA COAT 3';
    await registerAndLogin(page);
    const products = page.locator(".card-body");

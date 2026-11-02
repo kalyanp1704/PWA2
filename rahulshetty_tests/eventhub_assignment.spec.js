@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-const eventTitle = `Test${Date.now()}-Sk`;
+const eventTitle = `Test${Date.now()}-kalyan`;
 
 test.use({
     launchOptions : ({ slowMo : 2000 }),
@@ -65,35 +65,55 @@ async function login(page) {
 
     // Fill booking form
     await expect(page.locator('#ticket-count')).toHaveText('1');
+    await page.locator('#customerName').click();
+    await page.locator('#customerName').fill("Siva Kalyan");
+    await page.locator('#customer-email').click();
+    await page.locator('#customer-email').fill('posakalyan9@gmail.com');
+    await page.getByRole('textbox', { name: 'Phone Number*' }).fill('9876543211');
+    await page.getByRole('button', { name: 'Confirm Booking' }).click();
 
+    const bookingRefElement = page.locator('.booking-ref').first();
+    await expect(bookingRefElement).toBeVisible();
+    const bookingRef = (await bookingRefElement.innerText()).trim();
+    console.log('Booking Reference:', bookingRef);
 
+    // Verify in My Bookings
+    await page.getByRole('button', { name: 'View My Bookings' }).click();
+    await expect(page).toHaveURL(/\/bookings(?:[?#].*)?$/);
 
+    const bookingCards = page.locator('#booking-card');
+    await expect(bookingCards.first()).toBeVisible();
 
+    // has - to check for a chils Element
+    // hasText - match text inside an element
+    const matchedBooking = bookingCards.filter({
+        has: page.locator('.booking-ref', { hasText: bookingRef })
+    });
+    await expect(matchedBooking).toBeVisible();
+    await expect(matchedBooking).toContainText(eventTitle);
 
+    // Verify seat reduction
+    await page.locator('#nav-events').click();
+    const eventCards = page.getByTestId('event-card');
+    await expect(eventCards.first()).toBeVisible();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    const eventCard = eventCards.filter({
+        hasText: eventTitle
+    });
+    await expect(eventCard).toBeVisible();
     
+    const seatsTextAfter = await eventCard.getByText(/seat/i).innerText();
+    const seatsAfterBooking = parseInt(
+        seatsTextAfter.replace(/,/g, '').match(/\d+/)[0], 10
+    );
+
+    console.log('Seats before booking:', seatsBeforeBooking);
+    console.log('Seats after booking:', seatsAfterBooking);
+    expect(seatsAfterBooking).toBe(seatsBeforeBooking - 1);
 }
 
 test('Verify home page', async ({ page }) => {
-    test.setTimeout(60_000);
+    test.setTimeout(120_000);
 
     await page.setViewportSize({width : 1980, height: 1080 });
     await login(page);
