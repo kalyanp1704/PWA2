@@ -1,4 +1,4 @@
-// @ts-check
+
 import { test, expect } from '@playwright/test';
 test('Negative Case - To Validate the error/toast Message', async ({ browser }) => {
   const context = await browser.newContext();

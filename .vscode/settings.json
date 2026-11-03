@@ -1,3 +1,4 @@
 {
-  "testing.gutterEnabled": true
+    "testing.gutterEnabled": true,
+    "editor.matchBrackets": "never"
 }
