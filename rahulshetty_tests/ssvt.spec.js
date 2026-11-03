@@ -1,18 +1,13 @@
-const {test, expect} = require("@playwright/test");
+const { test, expect } = require('@playwright/test');
+const { AutomationPracticePage } = require('../pageObjects/rahulshetty/AutomationPracticePage');
 
-test("Screenshot/Visual testing", async({ browser }) => {
+test('Screenshot/Visual testing', async ({ page }) => {
+    const automationPracticePage = new AutomationPracticePage(page);
 
-    const context = await browser.newContext
-    ({
-        viewport: { width: 1920, height: 1080 }
-    });
-    const page = await context.newPage();
-
-    await page.goto("https://rahulshettyacademy.com/AutomationPractice/");
-    await expect(page.locator("#displayed-text")).toBeVisible();
-    await page.locator("#displayed-text").screenshot({path:'PartialScreenshot.png'}); //Partial Screenshot
-    page.locator("#hide-textbox").click();
-    await page.screenshot({path:'screenshot.png'}); // full page Screenshot
-    await expect(page.locator("#displayed-text")).toBeHidden();
+    await automationPracticePage.goto();
+    await expect(automationPracticePage.displayedTextbox()).toBeVisible();
+    await automationPracticePage.captureDisplayedTextbox('PartialScreenshot.png');
+    await automationPracticePage.hideTextbox();
+    await automationPracticePage.captureScreenshot('screenshot.png');
+    await expect(automationPracticePage.displayedTextbox()).toBeHidden();
 });
-

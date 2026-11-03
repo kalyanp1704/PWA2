@@ -1,4 +1,11 @@
 {
     "testing.gutterEnabled": true,
-    "editor.cursorStyle": "line"
+    "editor.cursorStyle": "line",
+    "editor.quickSuggestions": {
+        "other": "off",
+        "comments": "off",
+        "strings": "off"
+    },
+    "editor.suggestOnTriggerCharacters": false,
+    "editor.inlineSuggest.enabled": false
 }
