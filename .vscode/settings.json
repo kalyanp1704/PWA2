@@ -1,4 +1,4 @@
 {
     "testing.gutterEnabled": true,
-    "editor.matchBrackets": "never"
+    "editor.cursorStyle": "line"
 }
