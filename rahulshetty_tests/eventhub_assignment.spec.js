@@ -23,6 +23,8 @@ async function loginAndGoToBooking(page) {
     return eventBookingPage;
 }
 
+
+
 test('Verify home page', async ({ page }) => {
     test.setTimeout(120_000);
 
@@ -116,6 +118,8 @@ test('Single ticket booking is eligible for refund', async ({ page }) => {
     await expect(refundResult).toContainText('Eligible for refund');
     await expect(refundResult).toContainText('Single-ticket bookings qualify for a full refund');
 });
+
+
 
 test('Group ticket booking is not eligible for refund', async ({ page }) => {
     test.setTimeout(120_000);
