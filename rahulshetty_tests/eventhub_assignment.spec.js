@@ -150,3 +150,25 @@ test('Group ticket booking is not eligible for refund', async ({ page }) => {
     await expect(refundResult).toContainText('Not eligible for refund');
     await expect(refundResult).toContainText('Group bookings (3 tickets) are non-refundable');
 });
+
+
+async function selectDropdownValue(page, locator, expectedValue) {
+    const dropdown = page.locator(locator);
+    await dropdown.selectOption({ label: expectedValue });
+    console.log(`Successfully selected: ${expectedValue}`);
+}
+
+    
+
+test('Verify manage bookings Page', async ({ page }) => {
+    test.setTimeout(120_000);
+    const eventHubPage = new EventHubPage(page);
+    await eventHubPage.login(USER_EMAIL, USER_PASSWORD);
+    await eventHubPage.openManageBooking();
+    await selectDropdownValue(page, 'select', 'Confirmed');
+    const confirmedRecords = await eventHubPage.getConfirmedRecords();
+    console.log("Total Confirmed Records:", confirmedRecords.length);
+    expect(confirmedRecords.length).toBe(9);
+    await eventHubPage.clickViewBooking();
+    await eventHubPage.validateBookingStatus();
+});

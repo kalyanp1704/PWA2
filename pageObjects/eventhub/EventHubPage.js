@@ -1,8 +1,12 @@
+const { expect } = require('@playwright/test');
+
 const BASE_URL = 'https://eventhub.rahulshettyacademy.com';
 
 class EventHubPage {
     constructor(page) {
         this.page = page;
+        this.bookingRows = page.getByRole('rowgroup').nth(1).getByRole('row');
+        this.bookingDialog = page.getByRole('dialog');
     }
 
     async login(email, password) {
@@ -17,6 +21,35 @@ class EventHubPage {
         await this.page.getByText('Manage Events', { exact: true }).nth(0).click();
         await this.page.getByText('+ New Event').waitFor({ state: 'visible' });
     }
+
+    async openManageBooking(){
+        await this.page.getByText('Admin', { exact: true }).nth(0).click();
+        await this.page.getByText('Manage Bookings', { exact: true}).click();
+    
+    }
+
+    async getConfirmedRecords() {
+        await this.bookingRows.first().waitFor({ state: 'visible' });
+        const count = await this.bookingRows.count();
+        const records = [];
+        for (let i = 0; i < count; i++) {
+            const rowText = await this.bookingRows.nth(i).innerText();
+            records.push(rowText);
+        }
+        console.log("Confirmed Records:", records);
+        return records;
+    }
+
+    async clickViewBooking() {
+        await this.bookingRows.first().getByRole('button', { name: 'View' }).click();
+    }
+
+    async validateBookingStatus() {
+        await expect(this.bookingDialog).toContainText(/Status\s*confirmed/);
+    }
+
+
+
 
     async createEvent({ title, description, city, venue, date, price, seats }) {
         await this.page.locator('#event-title-input').fill(title);

@@ -42,8 +42,17 @@ class EventBookingPage {
     }
 
     async bookingReferenceText() {
+        const bookingReference = this.bookingReference();
+        if (await bookingReference.count()) {
+            const confirmationText = await bookingReference.first().innerText();
+            const confirmationMatch = confirmationText.match(/\b[A-Z]-[A-Z0-9]{6}\b/);
+            if (confirmationMatch) {
+                return confirmationMatch[0];
+            }
+        }
+
         const breadcrumbText = await this.page.locator('main nav').innerText();
-        const bookingRef = breadcrumbText.match(/\bD-[A-Z0-9]+\b/);
+        const bookingRef = breadcrumbText.match(/\b[A-Z]-[A-Z0-9]{6}\b/);
         if (!bookingRef) {
             throw new Error(`Could not find a booking reference in "${breadcrumbText}"`);
         }

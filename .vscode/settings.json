@@ -2,10 +2,18 @@
     "testing.gutterEnabled": true,
     "editor.cursorStyle": "line",
     "editor.quickSuggestions": {
-        "other": "off",
+        "other": "on",
         "comments": "off",
         "strings": "off"
     },
-    "editor.suggestOnTriggerCharacters": false,
-    "editor.inlineSuggest.enabled": false
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.inlineSuggest.enabled": false,
+    "editor.wordBasedSuggestions": "off",
+    "editor.parameterHints.enabled": false,
+    "editor.suggest.preview": false,
+    "editor.suggest.showInlineDetails": false,
+    "github.copilot.inlineSuggest.enable": false,
+    "github.copilot.enable": {
+        "*": false
+    }
 }
