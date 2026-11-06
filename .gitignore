@@ -5,7 +5,7 @@
 **/allure-results/
 **/allure-report/
 **/.auth/
-PWA2/test-results/
+**/test-results/
 **/.env
 **/.env.*
 !**/.env.example
