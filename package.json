@@ -6,9 +6,12 @@
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "report:allure": "allure generate ./allure-results --clean"
   },
   "devDependencies": {
-    "@playwright/test": "1.53.2"
+    "@playwright/test": "^1.65.0",
+    "allure-commandline": "2.46.1",
+    "allure-playwright": "^3.11.1"
   }
 }

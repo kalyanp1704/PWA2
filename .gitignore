@@ -2,6 +2,9 @@
 **/.git/
 **/playwright-report/
 **/blob-report/
+**/allure-results/
+**/allure-report/
+**/.auth/
 PWA2/test-results/
 **/.env
 **/.env.*
