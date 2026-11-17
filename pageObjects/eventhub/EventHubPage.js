@@ -95,8 +95,16 @@ class EventHubPage {
         await this.eventCard(title).getByTestId('book-now-btn').click();
     }
 
-    async openFirstEventBooking() {
-        await this.eventCards().first().getByTestId('book-now-btn').click();
+    async openFirstAvailableEventBooking() {
+        await this.eventCards().first().waitFor({ state: 'visible' });
+        const bookingButton = this.page
+            .locator('[data-testid="event-card"] [data-testid="book-now-btn"]:not([aria-disabled="true"])')
+            .first();
+        if (await bookingButton.count() === 0) {
+            throw new Error('No events are currently available for booking.');
+        }
+
+        await bookingButton.click();
     }
 }
 

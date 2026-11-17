@@ -20,6 +20,7 @@ class EventBookingPage {
         await this.page.getByLabel('Email').fill(email);
         await this.page.getByLabel('Phone').fill(phone);
         await this.page.locator('.confirm-booking-btn').click();
+        await this.bookingReference().waitFor({ state: 'visible' });
     }
 
     async increaseTicketCount(count = 2) {
@@ -39,6 +40,12 @@ class EventBookingPage {
 
     async openFirstBookingDetails() {
         await this.page.getByRole('link', { name: 'View Details' }).first().click();
+    }
+
+    async openBookingDetails(bookingRef) {
+        await this.bookingWithReference(bookingRef)
+            .getByRole('link', { name: 'View Details' })
+            .click();
     }
 
     async bookingReferenceText() {

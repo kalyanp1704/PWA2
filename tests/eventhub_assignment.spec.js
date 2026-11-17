@@ -23,7 +23,7 @@ async function loginAndGoToBooking(page) {
 
     await expect(page.getByText('Browse Events →', { exact: true })).toBeVisible();
     await eventHubPage.gotoEvents();
-    await eventHubPage.openFirstEventBooking();
+    await eventHubPage.openFirstAvailableEventBooking();
 
     return eventBookingPage;
 }
@@ -95,12 +95,12 @@ test('Single ticket booking is eligible for refund', async ({ page }) => {
         phone: '9876543210',
     });
 
+    const bookingRef = await eventBookingPage.bookingReferenceText();
     await eventBookingPage.openMyBookings();
     await expect(page).toHaveURL(/\/bookings(?:[?#].*)?$/);
-    await eventBookingPage.openFirstBookingDetails();
+    await eventBookingPage.openBookingDetails(bookingRef);
     await expect(eventBookingPage.bookingInformation()).toBeVisible();
 
-    const bookingRef = await eventBookingPage.bookingReferenceText();
     const eventTitle = (await eventBookingPage.bookingEventTitle().innerText()).trim();
     expect(bookingRef[0]).toBe(eventTitle[0]);
 
@@ -125,12 +125,12 @@ test('Group ticket booking is not eligible for refund', async ({ page }) => {
         phone: '9876543210',
     });
 
+    const bookingRef = await eventBookingPage.bookingReferenceText();
     await eventBookingPage.openMyBookings();
     await expect(page).toHaveURL(/\/bookings(?:[?#].*)?$/);
-    await eventBookingPage.openFirstBookingDetails();
+    await eventBookingPage.openBookingDetails(bookingRef);
     await expect(eventBookingPage.bookingInformation()).toBeVisible();
 
-    const bookingRef = await eventBookingPage.bookingReferenceText();
     const eventTitle = (await eventBookingPage.bookingEventTitle().innerText()).trim();
     expect(bookingRef[0]).toBe(eventTitle[0]);
 

@@ -1,5 +1,11 @@
 const { defineConfig } = require('@playwright/test');
+const fs = require('fs');
 const path = require('path');
+
+const envFile = path.join(__dirname, '.env');
+if (fs.existsSync(envFile)) {
+  process.loadEnvFile(envFile);
+}
 
 const eventHubAuthFile = path.join(__dirname, '.auth', 'eventhub.json');
 

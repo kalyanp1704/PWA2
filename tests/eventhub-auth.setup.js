@@ -3,14 +3,28 @@ const fs = require('fs');
 const path = require('path');
 
 const BASE_URL = 'https://eventhub.rahulshettyacademy.com';
-const AUTH_FILE = path.join(__dirname, '..', '.auth', 'eventhub.json');
+const PROJECT_DIR = path.join(__dirname, '..');
+const AUTH_FILE = path.join(PROJECT_DIR, '.auth', 'eventhub.json');
 
-test('authenticate once for EventHub tests', async ({ page }) => {
+function getCredentials() {
     const email = process.env.EVENTHUB_EMAIL;
     const password = process.env.EVENTHUB_PASSWORD;
-    if (!email || !password) {
-        throw new Error('Set EVENTHUB_EMAIL and EVENTHUB_PASSWORD before running the EventHub tests.');
+    const missing = [
+        !email && 'EVENTHUB_EMAIL',
+        !password && 'EVENTHUB_PASSWORD',
+    ].filter(Boolean);
+
+    if (missing.length > 0) {
+        throw new Error(
+            `Missing ${missing.join(' and ')}. Set them in your environment or in PWA2/.env (see .env.example).`
+        );
     }
+
+    return { email, password };
+}
+
+test('authenticate once for EventHub tests', async ({ page }) => {
+    const { email, password } = getCredentials();
 
     await page.goto(BASE_URL);
     await page.getByRole('textbox', { name: 'Email' }).fill(email);
