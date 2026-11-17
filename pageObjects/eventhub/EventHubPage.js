@@ -95,16 +95,34 @@ class EventHubPage {
         await this.eventCard(title).getByTestId('book-now-btn').click();
     }
 
-    async openFirstAvailableEventBooking() {
+    async openFirstAvailableEventBooking(requiredSeats = 1) {
         await this.eventCards().first().waitFor({ state: 'visible' });
-        const bookingButton = this.page
-            .locator('[data-testid="event-card"] [data-testid="book-now-btn"]:not([aria-disabled="true"])')
-            .first();
-        if (await bookingButton.count() === 0) {
-            throw new Error('No events are currently available for booking.');
+        const eventCards = this.eventCards();
+        const eventCount = await eventCards.count();
+
+        for (let index = 0; index < eventCount; index += 1) {
+            const eventCard = eventCards.nth(index);
+            const bookingButton = eventCard.getByTestId('book-now-btn');
+            if (!(await bookingButton.isEnabled())) {
+                continue;
+            }
+
+            const seatsLabel = eventCard.getByText(/[\d,]+\s+seats?\s+(?:left|available)/i);
+            if (await seatsLabel.count() === 0) {
+                continue;
+            }
+
+            const seatCount = Number.parseInt(
+                (await seatsLabel.innerText()).match(/[\d,]+/)[0].replace(/,/g, ''),
+                10
+            );
+            if (seatCount >= requiredSeats) {
+                await bookingButton.click();
+                return;
+            }
         }
 
-        await bookingButton.click();
+        throw new Error(`No events are available with at least ${requiredSeats} seats.`);
     }
 }
 

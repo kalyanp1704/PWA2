@@ -17,13 +17,13 @@ function getUserEmail() {
     return email;
 }
 
-async function loginAndGoToBooking(page) {
+async function loginAndGoToBooking(page, requiredSeats = 1) {
     const eventHubPage = new EventHubPage(page);
     const eventBookingPage = new EventBookingPage(page);
 
     await expect(page.getByText('Browse Events →', { exact: true })).toBeVisible();
     await eventHubPage.gotoEvents();
-    await eventHubPage.openFirstAvailableEventBooking();
+    await eventHubPage.openFirstAvailableEventBooking(requiredSeats);
 
     return eventBookingPage;
 }
@@ -116,7 +116,7 @@ test('Single ticket booking is eligible for refund', async ({ page }) => {
 
 test('Group ticket booking is not eligible for refund', async ({ page }) => {
     test.setTimeout(120_000);
-    const eventBookingPage = await loginAndGoToBooking(page);
+    const eventBookingPage = await loginAndGoToBooking(page, 3);
 
     await eventBookingPage.increaseTicketCount(2);
     await eventBookingPage.completeStandardBooking({

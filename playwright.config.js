@@ -15,6 +15,11 @@ module.exports = defineConfig({
     {
       name: 'eventhub-auth-setup',
       testMatch: '**/eventhub-auth.setup.js',
+      use: {
+        launchOptions: {
+          slowMo: 300,
+        },
+      },
     },
     {
       name: 'eventhub',
@@ -22,6 +27,9 @@ module.exports = defineConfig({
       dependencies: ['eventhub-auth-setup'],
       use: {
         storageState: eventHubAuthFile,
+        launchOptions: {
+          slowMo: 300,
+        },
       },
     },
     {
