@@ -10,7 +10,7 @@ if (fs.existsSync(envFile)) {
 const eventHubAuthFile = path.join(__dirname, '.auth', 'eventhub.json');
 
 module.exports = defineConfig({
-  testDir: '.',
+  testDir: './tests',
   projects: [
     {
       name: 'eventhub-auth-setup',
