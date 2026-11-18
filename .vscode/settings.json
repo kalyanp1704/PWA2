@@ -17,8 +17,8 @@
     "editor.suggest.showMethods": true,
     "editor.suggest.showFunctions": true,
     "editor.suggest.showProperties": true,
-    "javascript.suggest.enabled": false,
-    "javascript.suggest.completeFunctionCalls": true,
+    "js/ts.suggest.enabled": false,
+    "js/ts.suggest.completeFunctionCalls": true,
     "github.copilot.inlineSuggest.enable": false,
     "github.copilot.enable": {
         "*": false
