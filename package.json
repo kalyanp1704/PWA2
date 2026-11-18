@@ -2,12 +2,18 @@
   "name": "pwa2-playwright-tests",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20.12.0"
+  },
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
+    "test:eventhub": "playwright test tests/eventhub_assignment.spec.js",
+    "test:eventhub:headed": "playwright test tests/eventhub_assignment.spec.js --headed",
     "test:ui": "playwright test --ui",
     "report": "playwright show-report",
-    "report:allure": "allure generate ./allure-results --clean"
+    "report:allure": "allure generate ./allure-results --clean",
+    "allure:open": "allure open ./allure-report"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.0",

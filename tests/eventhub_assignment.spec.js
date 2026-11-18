@@ -5,16 +5,26 @@ const { EventBookingPage } = require('../pageObjects/eventhub/EventBookingPage')
 const BASE_URL = 'https://eventhub.rahulshettyacademy.com';
 const eventTitle = `Test${Date.now()}-kalyan`;
 
+function getEventHubCredentials() {
+    const email = process.env.EVENTHUB_EMAIL;
+    const password = process.env.EVENTHUB_PASSWORD;
+    if (!email || !password) {
+        throw new Error('Set EVENTHUB_EMAIL and EVENTHUB_PASSWORD in your environment or PWA2/.env (see .env.example).');
+    }
+
+    return { email, password };
+}
+
 test.beforeEach(async ({ page }) => {
-    await page.goto(BASE_URL);
+    const { email, password } = getEventHubCredentials();
+    const eventHubPage = new EventHubPage(page);
+
+    await eventHubPage.login(email, password);
+    await expect(page.getByText('Browse Events →', { exact: true })).toBeVisible();
 });
 
 function getUserEmail() {
-    const email = process.env.EVENTHUB_EMAIL;
-    if (!email) {
-        throw new Error('Set EVENTHUB_EMAIL before running the EventHub tests.');
-    }
-    return email;
+    return getEventHubCredentials().email;
 }
 
 async function loginAndGoToBooking(page, requiredSeats = 1) {
