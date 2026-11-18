@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": [
+    "playwright.config.js",
+    "tests/**/*.js",
+    "pageObjects/**/*.js",
+    "Utils/**/*.js"
+  ]
+}

@@ -148,7 +148,7 @@ test('Group ticket booking is not eligible for refund', async ({ page }) => {
     await expect(eventBookingPage.refundSpinner()).toBeVisible();
     await expect(eventBookingPage.refundSpinner()).toBeHidden({ timeout: 6_000 });
 
-    const refundResult = eventBookingPage.refundResult();
+    const refundResult = eventBookingPage.refundResult()
     await expect(refundResult).toBeVisible();
     await expect(refundResult).toContainText('Not eligible for refund');
     await expect(refundResult).toContainText('Group bookings (3 tickets) are non-refundable');
